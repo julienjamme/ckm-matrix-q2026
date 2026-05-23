@@ -1,1 +1,1 @@
-# ckm-matrix-q2026
+## Reproducible example for Q2026 paper
