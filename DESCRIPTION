@@ -11,11 +11,11 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 8.0.0
 Imports: 
     ptable,
-    ckm (>= 1.0.2),
+    ckm,
     dplyr,
     ggplot2,
     purrr,
     tidyr
-Remotes: 
-    github::InseeFrLab/ckm
+Remotes:
     github::julienjamme/ptable@dev
+    github::InseeFrLab/ckm
