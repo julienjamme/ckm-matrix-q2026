@@ -44,3 +44,58 @@ assess_apriori_utility <- function(freqs, transition_matrix, precision = 3){
     )
   
 }
+
+
+#' Title
+#'
+#' @param D1 Deviation for small counts
+#' @param V1 Variance for small counts
+#' @param js1 js for small counts
+#' @param D2 Deviation for last count
+#' @param V2 Variance for last count
+#' @param js2 js for last count
+#'
+#' @returns
+#' @export
+#'
+#' @examples
+build_stacked_matrix <- function(
+    D1, V1, js1,
+    D2, V2, js2=0
+){
+  
+  matrice_transition1 <- ptable::create_cnt_ptable(D = D1, V =V1, js=js1)
+  matrice_transition2 <- ptable::create_cnt_ptable(D = D2, V =V2, js=js2)
+  
+  matrice_transition <- matrice_transition1
+  
+  matrice_transition@pTable <- bind_rows(
+    matrice_transition1@pTable |> filter(i != max(i)),
+    matrice_transition1@pTable |> filter(i == max(i)) |> select(i, j) |> 
+      bind_cols(
+        matrice_transition2@pTable |> filter(i == max(i)) |> select(p:type)
+      )
+  )
+  
+  matrice_transition@empResults <- matrice_transition@pTable |> 
+    group_by(i) |>
+    summarise(
+      p_mean = sum(v*p),
+      p_var = sum(v^2*p) - sum(v*p)^2,
+      p_sum = sum(p),
+      .groups = "drop"
+    ) |>
+    left_join(matrice_transition@pTable |> filter(i==j) |> select(i, p_stay = p), by ="i") |>
+    mutate(p_stay = ifelse(is.na(p_stay), 0, p_stay)) |>
+    data.table::as.data.table()
+  
+  return(
+    list(
+      matrix_1 = matrice_transition1,
+      matrix_2 = matrice_transition2,
+      stacked = matrice_transition
+    )
+  )
+}
+
+
