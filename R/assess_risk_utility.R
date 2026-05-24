@@ -2,6 +2,8 @@ library(dplyr)
 library(purrr)
 library(ggplot2)
 
+source("R/functions.R")
+
 
 # Parameters tested ----------------
 
@@ -37,7 +39,17 @@ tabulars_risks <- imap(
           tail(1) |>
           rename(risk = qij) |>
           mutate(D=D,V=V,js=js,tab=name) |>
-          mutate(sm_count = freq |> summarise(pc = sum(N[i %in% 1:js])/sum(N[i>0])*100) |> pull(pc))
+          mutate(
+            nb_cell_not_null = freq |> summarise(nb = sum(N[i > 0])) |> pull(nb),
+            nb_cell_total = freq |> summarise(nb = sum(N)) |> pull(nb),
+            sm_count = freq |> summarise(pc = sum(N[i %in% 1:js])/sum(N[i>0])*100) |> pull(pc))
+        
+        utility <- assess_apriori_utility(freq, mat, precision = 3) |> tail(1) |>
+          select(imax=i,U1,L1,L2)
+        
+        return(
+          risks |> bind_cols(utility)
+        )
       }
     ) |> list_rbind()
   },

@@ -10,6 +10,7 @@ Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 8.0.0
 Imports: 
+    ptable,
     ckm (>= 1.0.2),
     dplyr,
     ggplot2,
@@ -17,3 +18,4 @@ Imports:
     tidyr
 Remotes: 
     github::InseeFrLab/ckm
+    github::julienjamme/ptable@dev
