@@ -9,13 +9,3 @@ License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 8.0.0
-Imports: 
-    ptable,
-    ckm,
-    dplyr,
-    ggplot2,
-    purrr,
-    tidyr
-Remotes:
-    github::julienjamme/ptable@dev
-    github::InseeFrLab/ckm
