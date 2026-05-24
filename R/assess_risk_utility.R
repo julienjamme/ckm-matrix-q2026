@@ -66,6 +66,13 @@ tabulars_risks |>
   knitr::kable(format="latex", digits=3,caption="")
 
 
+tabulars_risks |>
+  select(tab, js, sm_count, nb_cell_not_null, nb_cell_total) |> 
+  unique() |>
+  tidyr::pivot_wider(names_from = js, values_from = sm_count, names_prefix = "s=") |>
+  knitr::kable(format="latex", digits=3, caption="")
+
+
 # Graphical representation ------------------
 
 source("R/theme_ggplot.R")
@@ -85,7 +92,7 @@ tabulars_risks |>
   # scale_color_brewer("Variance", type = "qual", palette = 7) +
   # ggtitle("Risque d'inférence sur les petits comptages en fonction\ndu taux de petits comptages",
   #         subtitle = "En fonction du niveau de variance V et pour D=15 et js=4\nChaque point d'une couleur donnée représente un tableau") +
-  theme(legend.position = "inside", legend.position.inside = c(0.75, 0.25))
+  theme(legend.position = "inside", legend.position.inside = c(0.8, 0.3))
 
 ggsave("outputs/risk_vs_small_counts_s5.png", device = "png", dpi = 150)
 
@@ -105,7 +112,7 @@ tabulars_risks |>
   # scale_color_brewer("Variance", type = "qual", palette = 7) +
   # ggtitle("Risque d'inférence sur les petits comptages en fonction\ndu taux de petits comptages",
   #         subtitle = "En fonction du niveau de variance V et pour D=15 et js=4\nChaque point d'une couleur donnée représente un tableau") +
-  theme(legend.position = "inside", legend.position.inside = c(0.75, 0.25))
+  theme(legend.position = "inside", legend.position.inside = c(0.8, 0.3))
 
 ggsave("outputs/risk_vs_small_counts_s10.png", device = "png", dpi = 150)
 
