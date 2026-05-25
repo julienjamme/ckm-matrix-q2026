@@ -99,3 +99,47 @@ build_stacked_matrix <- function(
 }
 
 
+#' Title
+#'
+#' @param tab_data tabular data with a cell key
+#' @param mat_trans transition matrix
+#'
+#' @returns
+#' @export
+#'
+#' @examples
+apply_ckm_with_stacked_mat <- function(tab_data, mat_trans){
+  
+  cnt_var = "NB"
+  ck_var = "CK"
+  
+  require(data.table)
+  dt_data <- as.data.table(tab_data)
+  
+  tab_pert <- mat_trans@pTable
+  data.table::setkeyv(tab_pert, cols = c("i", "p_int_lb", "p_int_ub"))
+  
+  max_i <- max(tab_pert$i)
+  
+  dt_data[, `:=`(i = ifelse(get(cnt_var) <= max_i, get(cnt_var), max_i))]
+  # cell_key = rkeys_tot %% 1, # retrieve the decimal part of the sum of keys
+  # for convenience for merging
+  # transition probabilities for values > max_i are identical to i = max_i
+  
+  dt_data[, ck_end := get(ck_var)]
+  data.table::setkeyv(dt_data, cols = c("i", ck_var, "ck_end"))
+  
+  # interval join
+  cnt_var_ckm <- paste0(cnt_var, "_ckm")
+  res <- data.table::foverlaps(dt_data, tab_pert, mult = "all") |>
+    dplyr::mutate(res_ckm = get(cnt_var) + v) |>
+    dplyr::rename_with(~cnt_var_ckm, res_ckm)
+  
+  return(res |>
+           as.data.frame() |>
+           tibble::as_tibble() |>
+           dplyr::select(-ck_end, -i, -v, -p_int_lb, -p_int_ub, -{{ ck_var }})
+  )
+  
+}
+
